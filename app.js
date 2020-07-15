@@ -10,16 +10,63 @@ function getRandomInt(max){
     return Math.floor(Math.random()*Math.floor(max));
 }
 
+var namesArray = [];
+var team1 = {people: []};
+var team2 = {people: []};
+
 function displayTeam(team){
     var teamString = "";
-    for(var i = 0; i < team.length; i++)
-        teamString += team[i] + "  ";
+    for(var i = 0; i < team.people.length; i++)
+        teamString += team.people[i] + "  ";
     return teamString;
+}
+
+function makeTeam(team1, team2, namesArray){
+    let size = namesArray.length;
+    let teamsSplit;
+    if(size < 2) {
+        teamSplit = false;
+    } else if(size % 2 === 0){ //if there are an even amount of people
+        teamsSplit = true;
+        do {
+            //clear team1 && team2 when redoing teams 
+            team1.people = [];
+            team2.people = [];
+            let index1 = 0;
+            let index2 = 0; 
+            //keep rearranging teams
+            for(let i = 0; i < namesArray.length; i++){
+                if(getRandomInt(2) === 0)
+                    team1.people[index1++] = namesArray[i];
+                else
+                    team2.people[index2++] = namesArray[i];
+            }
+        } while (team1.people.length != size/2 || team2.people.length != size/2);
+           
+    } else { //if there are an odd amount of people 
+        teamsSplit = true;
+        do {
+            //clear team1 && team2 when redoing teams 
+            team1.people = [];
+            team2.people = [];
+            let index1 = 0;
+            let index2 = 0; 
+            //keep rearranging teams 
+            for(let i = 0; i < namesArray.length; i++){
+                if(getRandomInt(2) === 0)
+                    team1.people[index1++] = namesArray[i];
+                else 
+                    team2.people[index2++] = namesArray[i];
+            }
+        } while (!(team1.people.length === Math.floor(size/2) || team2.people.length === Math.floor(size/2)));
+            
+    }
+    return teamsSplit;
 }
 
 
 const stringArray = ["ready", "reconnecting", "disconnect", "message"];
-var namesArray = [];
+
 //==========================Status=========================
 client.on(stringArray[0], () => {
     console.log(`logged in as ${client.user.tag}`);
@@ -34,6 +81,8 @@ client.on(stringArray[2], () => {
     console.log(`This bot is now disconnected: ${client.user.tag}`);
 });
 //=====================End of Status===========================
+
+
 
 client.on(stringArray[3], msg => {
     var toLower = msg.content.toLowerCase();
@@ -51,52 +100,31 @@ client.on(stringArray[3], msg => {
         msg.react('💪');
         toLower = toLower.substring(7);
         namesArray = toLower.split(" ");
-        var size = namesArray.length;
-        var teamsSplit = false;
-        if(size < 2) {
-            msg.reply("😑You don't need me to split up teams.");
-        } else if(size % 2 === 0){ //if there are an even amount of people
-            teamsSplit = true;
-            do {
-                //clear team1 && team2 when redoing teams 
-                var team1 = [];
-                var team2 = [];
-                var index1 = 0;
-                var index2 = 0; 
-                //keep rearranging teams
-                for(var i = 0; i < namesArray.length; i++){
-                    if(getRandomInt(2) === 0)
-                        team1[index1++] = namesArray[i];
-                    else
-                        team2[index2++] = namesArray[i];
-                }
-            } while (team1.length != size/2 || team2.length != size/2);
-           
-        } else { //if there are an odd amount of people 
-            teamsSplit = true;
-            do {
-                //clear team1 && team2 when redoing teams 
-                var team1 = [];
-                var team2 = [];
-                var index1 = 0;
-                var index2 = 0; 
-                //keep rearranging teams 
-                for(var i = 0; i < namesArray.length; i++){
-                    if(getRandomInt(2) === 0)
-                        team1[index1++] = namesArray[i];
-                    else 
-                        team2[index2++] = namesArray[i];
-                }
-            } while (!(team1.length === Math.floor(size/2) || team2.length === Math.floor(size/2)));
-            
-        }
-
-        if(teamsSplit) {
+        if(makeTeam(team1,team2,namesArray)){
             msg.reply("\nTeam One:  " + displayTeam(team1));
             msg.reply("\nTeam Two:  " + displayTeam(team2));
+        } else {
+            msg.reply("😑You don't need me to split up teams.");
         }
-        
       
+    } else if(toLower === "-reshuffle") {
+        if(team1.people.length==0 || team2.people.length==0)
+            msg.reply("Nothing to shuffle...");
+        else {
+            if(makeTeam(team1,team2,namesArray)){
+                msg.react('✊');
+                msg.reply("\nTeam One:  " + displayTeam(team1));
+                msg.reply("\nTeam Two:  " + displayTeam(team2));
+            } else {
+                msg.reply("😑You don't need me to split up teams.");
+            }
+        }    
+    } else if((toLower.includes("who") || toLower.includes("what") || toLower.includes("why")) && toLower.includes("holden")) {
+        msg.react('😂');
+        msg.reply("Holden deez nuts! Gottem! Team Generator: 1" + "   " + msg.author.username + ": 0");
+        
     }
 });
+
+
 client.login(token);
