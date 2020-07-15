@@ -2,6 +2,10 @@ const Discord = require("discord.js");
 
 const client = new Discord.Client();
 
+const {
+    token
+} = require("./token.json");
+
 function getRandomInt(max){
     return Math.floor(Math.random()*Math.floor(max));
 }
@@ -19,6 +23,7 @@ var namesArray = [];
 //==========================Status=========================
 client.on(stringArray[0], () => {
     console.log(`logged in as ${client.user.tag}`);
+    client.user.setActivity("with Holden");
 });
 
 client.on(stringArray[1], () => {
@@ -94,4 +99,4 @@ client.on(stringArray[3], msg => {
       
     }
 });
-client.login("NzMyMzE0MTI5ODI1NjYxMDg4.XwyzLA.SEOyxcGzshQdUDkkFua_npTI19o");
+client.login(token);
