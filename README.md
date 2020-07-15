@@ -1,7 +1,7 @@
 # Team-Generator-Bot
 ## Discord Bot that splits a list of people into two different teams. Applicable to anything such as board games, sports like basketball, volleyball, and etc...
 
-**Invite Team-Generator-Bot to your Discord Server!
+**Invite Team-Generator-Bot to your Discord Server!**
 https://discord.com/api/oauth2/authorize?client_id=732314129825661088&scope=bot&permissions=1
 
 **Commands**:
